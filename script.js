@@ -21,33 +21,19 @@ const defaultProfile = {
   }
 };
 
-const savedProfile = (() => {
-  try {
-    const raw = localStorage.getItem("adminProfile");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-})();
-
 const profile = {
   ...defaultProfile,
-  ...savedProfile,
   youtube: {
-    ...defaultProfile.youtube,
-    ...(savedProfile?.youtube || {})
+    ...defaultProfile.youtube
   },
   discord: {
-    ...defaultProfile.discord,
-    ...(savedProfile?.discord || {})
+    ...defaultProfile.discord
   },
   minecraft: {
-    ...defaultProfile.minecraft,
-    ...(savedProfile?.minecraft || {})
+    ...defaultProfile.minecraft
   },
   roblox: {
-    ...defaultProfile.roblox,
-    ...(savedProfile?.roblox || {})
+    ...defaultProfile.roblox
   }
 };
 
@@ -103,12 +89,6 @@ function applyLanguage(language) {
 
   langPlButton.classList.toggle("is-active", language === "pl");
   langEnButton.classList.toggle("is-active", language === "en");
-
-  try {
-    localStorage.setItem("preferredLanguage", language);
-  } catch {
-    // Ignore storage issues and keep the page working.
-  }
 }
 
 function applyProfileData() {
@@ -143,14 +123,6 @@ function fillAdminForm() {
   document.getElementById("adminRobloxUrl").value = profile.roblox.url;
 }
 
-function saveProfile() {
-  try {
-    localStorage.setItem("adminProfile", JSON.stringify(profile));
-  } catch {
-    console.warn("Could not save admin profile.");
-  }
-}
-
 function setAdminPanel(open) {
   if (!adminPanel) {
     return;
@@ -160,17 +132,7 @@ function setAdminPanel(open) {
   adminPanel.setAttribute("aria-hidden", String(!open));
 }
 
-const savedLanguage = (() => {
-  try {
-    return localStorage.getItem("preferredLanguage");
-  } catch {
-    return null;
-  }
-})();
-
-const currentLanguage =
-  savedLanguage ||
-  (navigator.language?.toLowerCase().startsWith("pl") ? "pl" : "en");
+const currentLanguage = navigator.language?.toLowerCase().startsWith("pl") ? "pl" : "en";
 
 applyProfileData();
 fillAdminForm();
@@ -209,7 +171,6 @@ if (adminForm) {
     profile.roblox.label = document.getElementById("adminRobloxLabel").value.trim() || defaultProfile.roblox.label;
     profile.roblox.url = document.getElementById("adminRobloxUrl").value.trim() || defaultProfile.roblox.url;
 
-    saveProfile();
     applyProfileData();
     fillAdminForm();
   });
@@ -224,12 +185,6 @@ if (adminReset) {
       minecraft: { ...defaultProfile.minecraft },
       roblox: { ...defaultProfile.roblox }
     });
-
-    try {
-      localStorage.removeItem("adminProfile");
-    } catch {
-      console.warn("Could not reset admin profile.");
-    }
 
     fillAdminForm();
     applyProfileData();
