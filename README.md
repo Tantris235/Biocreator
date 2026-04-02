@@ -1,6 +1,6 @@
 # BioCreator
 
-BioCreator is a modern single-page bio template for GitHub Pages.
+BioCreator is a modern single-page bio template for GitHub Pages and normal sites.
 
 ## Features
 
